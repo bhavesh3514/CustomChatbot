@@ -1,4 +1,4 @@
-# CustomChatbot
+<img width="1920" height="871" alt="image" src="https://github.com/user-attachments/assets/a81de55f-21c3-4477-9d38-7da1a2b70fd9" /># CustomChatbot
 
 A personal AI-powered chatbot built for interactive and intelligent conversations. Developed and maintained by [Your Name].
 
@@ -17,12 +17,6 @@ A personal AI-powered chatbot built for interactive and intelligent conversation
 - Auto-resizing input box for smooth typing experience.
 - Responsive design, works on desktop and mobile.
 - Easy to extend for custom functionality.
-
----
-
-## Screenshots
-
-[screenshot.png]
 
 ---
 
@@ -80,12 +74,6 @@ Start chatting with your AI chatbot!
 
 Feel free to fork the repo and create pull requests.  
 Suggestions, bug reports, and feature requests are welcome!
-
----
-
-## License
-
-This project is licensed under the MIT License. See LICENSE file for details.
 
 ---
 
