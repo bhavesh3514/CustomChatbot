@@ -1,0 +1,160 @@
+﻿@model CustomChatbot.Models.ChatBotModel
+
+<h2 class="mb-4">💬 AI Chatbot by Bhavesh</h2>
+<div class="card shadow-sm">
+    <!-- Chat messages -->
+    <div id="chatMessages" class="card-body bg-light">
+        <div class="container position-relative">
+            <!-- Placeholder before chat starts -->
+            @if (Model.ChatHistory == null || !Model.ChatHistory.Any())
+            {
+                <div id="placeholderText" class="text-center text-muted fs-4 my-5">
+                    🤔 Got a question? Just type it here…
+                </div>
+            }
+
+            @if (Model.ChatHistory != null && Model.ChatHistory.Any())
+            {
+                foreach (var chat in Model.ChatHistory)
+                {
+                    if (chat.IsUser)
+                    {
+                        <div class="row mb-2">
+                            <div class="col text-end">
+                                <span class="badge bg-primary p-2 d-inline-block text-wrap"
+                                      style="white-space: pre-wrap; word-break: break-word; overflow-wrap: break-word; max-width: 90%; text-align: left;">
+                                    @chat.Message
+                                </span>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="row mb-2">
+                            <div class="col text-start">
+                                <span class="badge bg-secondary p-2 d-inline-block text-wrap"
+                                      style="white-space: pre-wrap; word-break: break-word; overflow-wrap: break-word; max-width: 90%; text-align: left;">
+                                    @chat.Message
+                                </span>
+                            </div>
+                        </div>
+                    }
+                }
+            }
+        </div>
+    </div>
+
+    <!-- Chat input -->
+    <div class="card-footer">
+        <form id="chatForm" class="d-flex align-items-end">
+            <textarea id="UserMessage" name="UserMessage" class="form-control me-2"
+                      placeholder="Type your message..." rows="1"
+                      style="resize: none; overflow-y: auto;"></textarea>
+            <button type="submit" id="sendBtn" class="btn btn-success">Send</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var chatBox = $("#chatMessages");
+            var sendBtn = $("#sendBtn");
+            var userMessage = $("#UserMessage");
+            var placeholder = $("#placeholderText");
+
+            // Auto scroll to bottom on load
+            chatBox.scrollTop(chatBox[0].scrollHeight);
+
+            // Auto-resize textarea
+            userMessage.on('input', function () {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+
+            $("#chatForm").submit(function (e) {
+                e.preventDefault();
+
+                let message = userMessage.val();
+                if (!message.trim()) return;
+
+                // Hide placeholder on first message
+                placeholder.hide();
+
+                // Append user message instantly
+                $("#chatMessages .container").append(`
+                    <div class="text-end mb-2">
+                        <span class="badge bg-primary p-2 d-inline-block text-wrap"
+                              style="white-space: pre-wrap; word-break: break-word; overflow-wrap: break-word; max-width: 90%; text-align: left;">
+                            ${message}
+                        </span>
+                    </div>
+                `);
+                chatBox.scrollTop(chatBox[0].scrollHeight);
+
+                // Disable send button
+                sendBtn.prop("disabled", true);
+
+                // Show typing indicator
+                var typingIndicator = $(`
+                    <div class="text-start mb-2" id="typingIndicator">
+                        <span class="badge bg-secondary p-2 d-inline-block text-wrap"
+                              style="white-space: pre-wrap; word-break: break-word; overflow-wrap: break-word; max-width: 90%; text-align: left;">
+                            Typing...
+                        </span>
+                    </div>
+                `);
+                $("#chatMessages .container").append(typingIndicator);
+                chatBox.scrollTop(chatBox[0].scrollHeight);
+
+                       // Send to server
+                $.ajax({
+                    url: '@Url.Action("SendMessage", "ChatBot")',
+                    type: 'POST',
+                    data: { userMessage: message },
+                    success: function (botReply) {
+                        // Remove typing indicator
+                        $("#typingIndicator").remove();
+
+                        // Append bot response
+                        $("#chatMessages .container").append(`
+                            <div class="text-start mb-2">
+                                <span class="badge bg-secondary p-2 d-inline-block text-wrap"
+                                      style="white-space: pre-wrap; word-break: break-word; overflow-wrap: break-word; max-width: 90%; text-align: left;">
+                                    ${botReply}
+                                </span>
+                            </div>
+                        `);
+                        chatBox.scrollTop(chatBox[0].scrollHeight);
+
+                        // Enable send button
+                        sendBtn.prop("disabled", false);
+                    },
+                    error: function (xhr, status, error) {
+                        // Remove typing indicator
+                        $("#typingIndicator").remove();
+
+                        // Append error message to chat
+                        $("#chatMessages .container").append(`
+                            <div class="text-start mb-2">
+                                <span class="badge bg-danger p-2 d-inline-block text-wrap"
+                                      style="white-space: pre-wrap; word-break: break-word; overflow-wrap: break-word; max-width: 90%; text-align: left;">
+                                    Error: Could not send message. Please try again.
+                                </span>
+                            </div>
+                        `);
+                        chatBox.scrollTop(chatBox[0].scrollHeight);
+
+                        // Enable send button
+                        sendBtn.prop("disabled", false);
+
+                        console.error("Server error:", error, xhr.responseText);
+                    }
+                });
+                // Clear textarea and reset height
+                userMessage.val('').css('height', 'auto');
+            });
+        });
+    </script>
+}
