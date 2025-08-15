@@ -1,4 +1,4 @@
-<img width="1920" height="871" alt="image" src="https://github.com/user-attachments/assets/a81de55f-21c3-4477-9d38-7da1a2b70fd9" /># CustomChatbot
+# CustomChatbot
 
 A personal AI-powered chatbot built for interactive and intelligent conversations. Developed and maintained by [Your Name].
 
@@ -17,6 +17,12 @@ A personal AI-powered chatbot built for interactive and intelligent conversation
 - Auto-resizing input box for smooth typing experience.
 - Responsive design, works on desktop and mobile.
 - Easy to extend for custom functionality.
+
+---
+
+## Screenshots
+
+<img width="1920" height="871" alt="image" src="https://github.com/user-attachments/assets/c57627bd-59d3-4ca6-9645-99ce71f17be8" />
 
 ---
 
